@@ -1,0 +1,18 @@
+[
+    {
+        "merged": "E:\\java\\Android\\MyApplication\\library\\build\\intermediates\\res\\merged\\debug\\drawable\\vpi__tab_indicator.xml",
+        "source": "E:\\java\\Android\\MyApplication\\library\\src\\main\\res\\drawable\\vpi__tab_indicator.xml"
+    },
+    {
+        "merged": "E:\\java\\Android\\MyApplication\\library\\build\\intermediates\\res\\merged\\debug\\drawable\\app_home_shortcuts_button_selector.xml",
+        "source": "E:\\java\\Android\\MyApplication\\library\\src\\main\\res\\drawable\\app_home_shortcuts_button_selector.xml"
+    },
+    {
+        "merged": "E:\\java\\Android\\MyApplication\\library\\build\\intermediates\\res\\merged\\debug\\drawable\\android_home_shortcuts_item_bg.png",
+        "source": "E:\\java\\Android\\MyApplication\\library\\src\\main\\res\\drawable\\android_home_shortcuts_item_bg.png"
+    },
+    {
+        "merged": "E:\\java\\Android\\MyApplication\\library\\build\\intermediates\\res\\merged\\debug\\drawable\\android_home_shortcuts_item_bg_focused.png",
+        "source": "E:\\java\\Android\\MyApplication\\library\\src\\main\\res\\drawable\\android_home_shortcuts_item_bg_focused.png"
+    }
+]

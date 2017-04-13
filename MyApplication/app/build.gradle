@@ -1,0 +1,65 @@
+apply plugin: 'com.android.application'
+android {
+    compileSdkVersion 24
+    buildToolsVersion "25.0.2"
+    defaultConfig {
+        aaptOptions.cruncherEnabled = false
+        aaptOptions.useNewCruncher = false
+        applicationId "com.example.tby.myapplication"
+        minSdkVersion 23
+        targetSdkVersion 24
+        versionCode 1
+        versionName "1.0"
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+    packagingOptions {
+        exclude 'META-INF/LICENSE'
+        exclude 'META-INF/ASL2.0'
+        exclude 'META-INF/MANIFEST.MF'
+        exclude 'NOTICE'
+    }
+}
+/*
+dependencies {
+    compile fileTree(include: ['*.jar'], dir: 'libs')
+    androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
+        exclude group: 'com.android.support', module: 'support-annotations'
+    })
+    compile 'com.android.support:appcompat-v7:24.2.1'
+    testCompile 'junit:junit:4.12'
+    //compile files('libs/android-support-v4.jar')
+   // compile files('libs/AutoScroll-ViewPager.jar')
+}
+*/
+repositories{
+    flatDir{
+        dirs 'libs'
+    }
+}
+
+dependencies {
+    androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
+        exclude group: 'com.android.support', module: 'support-annotations'
+    })
+    compile name:'SMSSDK-2.1.4',ext:'aar'
+    compile name:'SMSSDKGUI-2.1.4',ext:'aar'
+    compile 'com.android.support:appcompat-v7:24.2.1'
+    compile 'org.xutils:xutils:3.2.2'
+    testCompile 'junit:junit:4.12'
+    //compile files('libs/android-support-v4.jar')
+    compile files('libs/AutoScroll-ViewPager.jar')
+    compile files('libs/UniversalListViewAdapter.jar')
+    compile files('libs/jackson-core-asl-1.9.7.jar')
+    compile files('libs/jackson-mapper-asl-1.9.7.jar')
+    provided files('libs/android-support-v4.jar')
+    compile 'com.jude:rollviewpager:1.2.9'
+    compile files('libs/universal-image-loader-1.8.6-with-sources.jar')
+    compile files('libs/MobCommons-2017.0321.1624.jar')
+    compile files('libs/MobTools-2017.0321.1624.jar')
+}
