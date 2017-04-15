@@ -7,6 +7,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import tby.com.encode.encodeOfRSA;
 import tby.com.sql.sqlCreat;
 import tby.com.sql.sqlOfGift;
 
@@ -16,6 +17,8 @@ public class welcome extends HttpServlet {
 	public void init() throws ServletException {
 		// TODO Auto-generated method stub
 		super.init();
+		encodeOfRSA.setPubKeyFile(getServletContext().getRealPath(encodeOfRSA.getPubKeyFile()));
+		encodeOfRSA.setPriKeyFile(getServletContext().getRealPath(encodeOfRSA.getPriKeyFile()));
 		sqlCreat.init();
 	}
 	

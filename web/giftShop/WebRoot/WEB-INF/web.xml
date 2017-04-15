@@ -63,5 +63,15 @@
     <servlet-name>shoppingCar</servlet-name>
     <url-pattern>/shoppingCar</url-pattern>
   </servlet-mapping>
+    <servlet>
+    <servlet-name>dealOrder</servlet-name>
+    <servlet-class>tby.com.gift.dealOrder</servlet-class>
+  </servlet>
+  
+  <servlet-mapping>
+    <servlet-name>dealOrder</servlet-name>
+    <url-pattern>/dealOrder</url-pattern>
+  </servlet-mapping>
+  
   
 </web-app>

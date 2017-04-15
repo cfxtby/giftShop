@@ -15,6 +15,7 @@ import java.security.spec.X509EncodedKeySpec;
 import javax.crypto.Cipher;
 
 import org.apache.commons.codec.binary.Base64;
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
 public class encodeOfRSA {
 	private static byte[] pub_key;//="MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDSUmOXyQmYYSnZacp0btvAZCOvCNPtzixAp7eJmzmAG4mgy/VgrY/s1BDLh9qTNHIRWXepUtwMrf1kYul/A45qE/2oxIbeeq4238YDWQ7ModOVXR9ytEHsT0jpCFvoYfYXYZnnoWRrLIBylQeXzqxbLDxxBxGCs4AjoRKh5S7nNQIDAQAB".getBytes();
@@ -23,9 +24,22 @@ public class encodeOfRSA {
 	// 数字签名，密钥算法
 	private static final String RSA_KEY_ALGORITHM = "RSA";
 	private static final String keyFile="keys/";
-	private static final String priKeyFile=keyFile+"pri_key";
-	private static final String pubKeyFile=keyFile+"pub_key";
-	
+	private static String priKeyFile="pri_key";
+	private static String pubKeyFile="pub_key";
+
+	public static String getPriKeyFile() {
+		return priKeyFile;
+	}
+	public static void setPriKeyFile(String priKeyFile) {
+		encodeOfRSA.priKeyFile = priKeyFile;
+	}
+	public static String getPubKeyFile() {
+		return pubKeyFile;
+	}
+	public static void setPubKeyFile(String pubKeyFile) {
+		encodeOfRSA.pubKeyFile = pubKeyFile;
+	}
+
 	// 数字签名签名/验证算法
 	private static final String SIGNATURE_ALGORITHM = "MD5withRSA";
 
@@ -47,6 +61,7 @@ public class encodeOfRSA {
 		pri_key = keys.getPrivate().getEncoded();
 		////.println("私钥：" + Base64.encodeBase64String(pri_key));
 	    File file= new File(pubKeyFile);
+	    if(!file.exists())file.createNewFile();
 		FileOutputStream fw = new FileOutputStream(file);
 		////.println(pub_key.length);
 		fw.write(pub_key);
@@ -54,6 +69,7 @@ public class encodeOfRSA {
 		//fw.write(pri_key);
 		fw.close();
 	    file= new File(priKeyFile);
+	    if(!file.exists())file.createNewFile();
 		fw = new FileOutputStream(file);
 		fw.write(pri_key);
 		fw.close();
@@ -61,6 +77,7 @@ public class encodeOfRSA {
 	
 	private static void initKey() throws Exception {
 		int i=162,j=634;
+		
 		FileInputStream fi=new FileInputStream(new File(pubKeyFile));
 		byte[] buf=new byte[i];
 		byte[] buf1=new byte[j];
@@ -68,7 +85,10 @@ public class encodeOfRSA {
 		fi.close();
 
 		pub_key=buf;
-		////.println("私钥：" + new String(buf));
+		String g=Base64Utils.encode(pub_key);
+		System.out.println("公钥：" + Base64Utils.encode(pub_key));
+		
+		pub_key=Base64Utils.decode(g);
 		fi=new FileInputStream(new File(priKeyFile));
 		fi.read(buf1,0,j);
 		pri_key=buf1;
@@ -93,7 +113,8 @@ public class encodeOfRSA {
 		KeyFactory keyFactory = KeyFactory.getInstance(RSA_KEY_ALGORITHM);
 		PublicKey publicKey = keyFactory.generatePublic(x509KeySpec);
 		// 对数据加密
-		Cipher cipher = Cipher.getInstance(keyFactory.getAlgorithm());
+		Cipher cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding",new BouncyCastleProvider());
+		//Cipher cipher = Cipher.getInstance(keyFactory.getAlgorithm());
 		cipher.init(Cipher.ENCRYPT_MODE, publicKey);
 		return cipher.doFinal(data);
 	}
@@ -106,7 +127,7 @@ public class encodeOfRSA {
 	public static String encryptByPubKey(String data) throws Exception {
 		// 私匙加密
 		byte[] enSign = encryptByPubKey(data.getBytes());
-		return Base64.encodeBase64String(enSign);
+		return Base64Utils.encode(enSign);
 	}
 	/**
 	 * 用私钥加密
@@ -182,7 +203,10 @@ public class encodeOfRSA {
 		KeyFactory keyFactory = KeyFactory.getInstance(RSA_KEY_ALGORITHM);
 		PrivateKey privateKey = keyFactory.generatePrivate(pkcs8KeySpec);
 		// 对数据解密
-		Cipher cipher = Cipher.getInstance(keyFactory.getAlgorithm());
+		//Cipher cipher = Cipher.getInstance(keyFactory.getAlgorithm());
+		//Cipher cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding"); 
+		Cipher cipher = Cipher.getInstance("RSA","BC");  
+		//Cipher cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding",new BouncyCastleProvider());
 		cipher.init(Cipher.DECRYPT_MODE, privateKey);
 		return cipher.doFinal(data);
 	}
@@ -198,7 +222,18 @@ public class encodeOfRSA {
 		return new String(design);
 	}
 	
-	
+	public static void main(String args[]){
+		try {
+			String get1=encryptByPubKey("123456");
+			System.out.println(get1);
+			String get="jl8CK9lPfYX7vt5FgmYmuedOmINAsOXpKlBlt7v5xuTjwhiuLfH1Z3mqImsGFayn+7mZSSnNUBoxzLJT0DuAqsN3g9E6TMvlnJ+O4WDRwzeWH2sprrMHDnCEUW7eawZih+Ycv+HOIRffsWdOheK81BgKGMAX3nQAFSctGLAbFB8=";
+			get=decryptByPriKey(get);
+			System.out.println(get);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 	
 }
 

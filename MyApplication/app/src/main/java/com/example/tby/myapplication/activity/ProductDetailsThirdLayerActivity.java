@@ -1,19 +1,25 @@
 package com.example.tby.myapplication.activity;
 
 import java.util.ArrayList;
+import java.util.Map;
 
 import cn.trinea.android.view.autoscrollviewpager.AutoScrollViewPager;
 
 import com.example.R;
 import com.example.tby.myapplication.network.NetworkManager;
+import com.example.tby.myapplication.noscrollview.LoadingDialog;
 import com.example.tby.myapplication.userInfo;
+import com.example.tby.myapplication.utils.AesUtil;
 import com.example.tby.myapplication.utils.beans;
+import com.example.tby.myapplication.utils.encodeOfRSA;
+import com.example.tby.myapplication.utils.tokenDB;
 import com.viewpagerindicator.CirclePageIndicator;
 
 
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.drawable.TransitionDrawable;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.view.PagerAdapter;
 import android.util.Log;
@@ -49,7 +55,7 @@ public class ProductDetailsThirdLayerActivity extends Activity {
     private TextView name,decs,price;
     private beans gift;
     private Button cart,buy;
-
+    private LoadingDialog ld;
     /**
      * 存储图片url地址
      */
@@ -118,8 +124,9 @@ public class ProductDetailsThirdLayerActivity extends Activity {
                     switch (v.getId()){
                         case R.id.pd_btn_addIntoCart:
                             break;
-                        case R.id.cart_btn_buy:
-                            buyGift();
+                        case R.id.pd_btn_buy:
+                            get();
+                            //buyGift();
                             break;
                         default:ProductDetailsThirdLayerActivity.this.finish();
                     }
@@ -129,6 +136,10 @@ public class ProductDetailsThirdLayerActivity extends Activity {
         cart.setOnClickListener(listener);
         buy.setOnClickListener(listener);
     }
+
+
+
+
 
     private void addTocart(){
         String url=getResources().getString(R.string.ip);
@@ -157,24 +168,129 @@ public class ProductDetailsThirdLayerActivity extends Activity {
         });
     }
 
-    private void buyGift(){
-        if(userInfo.getAccess_token()==null){
+
+    public void get(){
+        if(!userInfo.isLogin()){
             Toast.makeText(this,"请先注册登录",Toast.LENGTH_SHORT).show();
             return;
         }
-        String url=getResources().getString(R.string.ip);
+        ld= new LoadingDialog(ProductDetailsThirdLayerActivity.this);
+        ld.show();
+        new AsyncTask<Void, Void, String>(){
+            String url=getResources().getString(R.string.ip)+"dealOrder";
+            JSONObject jo;
+            @Override
+            protected String doInBackground(Void... params) {
+                String get=null;
+                try {
+
+                    try {
+                        jo=new JSONObject();
+                        jo.put("access_token",userInfo.getAccess_token());
+                        jo.put("goodid",gift.getId()+"");
+                        jo.put("userid", userInfo.getUsername()+"");
+                        jo.put("price",gift.getPrice()+"");
+                        jo.put("num","1");
+                        get=jo.toString();
+                        get= AesUtil.aesEncrypt(get,userInfo.getAESkey());
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+
+                    }
+                   // String get= encodeOfRSA.encryptByPubKey(map.get("password"),getResources().getString(R.string.RSA_pub));
+                    //String get= AesUtil.aesEncrypt(map.get("password"),"1234567890123456");
+
+                    return get;
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                return null;
+            }
+            @Override
+            protected void onPostExecute(String s) {
+                RequestParams params = new RequestParams(url);
+                System.out.println(s);
+                params.addBodyParameter("data",s);
+                params.addBodyParameter("access_token",userInfo.getAccess_token());
+
+                x.http().post(params, new Callback.CommonCallback<String>() {
+                    private boolean hasError = false;
+                    private String result = null;
+                    @Override
+                    public void onSuccess(String result) {
+                        ld.dismiss();
+
+                        if (result != null) {
+                            System.out.println(result);
+                            if(result.compareTo("OK")==0){
+                                Toast.makeText(ProductDetailsThirdLayerActivity.this,"购买成功",Toast.LENGTH_SHORT).show();
+                                return;
+                            }
+                            else{
+                                Toast.makeText(ProductDetailsThirdLayerActivity.this,"购买失败",Toast.LENGTH_SHORT).show();
+                                return;
+                            }
+                            //Toast.makeText(ProductDetailsThirdLayerActivity.this,"登陆成功",Toast.LENGTH_SHORT).show();
+                        }
+                    }
+
+                    @Override
+                    public void onError(Throwable ex, boolean isOnCallback) {
+                        ld.dismiss();
+                        System.out.println(hasError+result+ex.getMessage());
+                        hasError = true;
+                        Toast.makeText(x.app(),"", Toast.LENGTH_LONG).show();
+                    }
+
+                    @Override
+                    public void onCancelled(CancelledException cex) {
+
+                    }
+
+                    @Override
+                    public void onFinished() {
+                        if (!hasError && result != null) {
+                            System.out.println(result);
+                            //onSuccessResponse(result,callback);
+                        }
+                    }
+                });
+                super.onPostExecute(s);
+            }
+        }.execute();
+
+
+
+    }
+
+
+    private void buyGift(){
+        if(!userInfo.isLogin()){
+            Toast.makeText(this,"请先注册登录",Toast.LENGTH_SHORT).show();
+            return;
+        }
+        String url=getResources().getString(R.string.ip)+"dealOrder";
+
         RequestParams params = new RequestParams (url);
         params.addBodyParameter("access_token",userInfo.getAccess_token());
         params.addBodyParameter("goodid",gift.getId()+"");
         params.addBodyParameter("userid", userInfo.getUsername()+"");
         params.addBodyParameter("price",gift.getPrice()+"");
         params.addBodyParameter("num","1");
-
+        System.out.println(userInfo.getAccess_token());
         x.http().post(params, new Callback.CommonCallback<String>(){
             @Override
             public void onSuccess(String result) {
                 Log.d("提交订单返回值",result);
-               // Toast.makeText(x.app(), result, Toast.LENGTH_LONG).show();
+                if(result.compareTo("OK")==0){
+                    Toast.makeText(x.app(), "购买成功", Toast.LENGTH_LONG).show();
+                    ProductDetailsThirdLayerActivity.this.finish();
+                }
+                else{
+                    Toast.makeText(x.app(), "购买失败", Toast.LENGTH_LONG).show();
+                }
+
             }
 
             @Override
@@ -210,15 +326,15 @@ public class ProductDetailsThirdLayerActivity extends Activity {
      * 获取广告图片列表
      */
     private void getViewImage() {
-        System.out.println(gift.getId());
+        //System.out.println(gift.getId());
         String url=getResources().getString(R.string.ip)+"goodInfo?accountGood="+gift.getId();
-        System.out.println(url);
+        //System.out.println(url);
         RequestParams params = new RequestParams(url);
         x.http().get(params, new Callback.CommonCallback<String>() {
 
             @Override
             public void onSuccess(String result) {
-                System.out.println(result);
+                //System.out.println(result);
                 try {
                     JSONObject ja=new JSONArray(result).getJSONObject(0);
                     gift.setPrice(ja.getString("price"));

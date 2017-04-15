@@ -82,7 +82,7 @@ public class CartFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
-        if (userInfo.isLogin) {
+        if (userInfo.isLogin()) {
             // 已登录
             // 隐藏提示登录的布局
             suggestLayout.setVisibility(View.GONE);

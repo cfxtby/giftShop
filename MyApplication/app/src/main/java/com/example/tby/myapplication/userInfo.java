@@ -17,6 +17,16 @@ public final class userInfo {
     private static String token_type;
     public static String client_id;
 
+    public static String getAESkey() {
+        return AESkey;
+    }
+
+    public static void setAESkey(String AESkey) {
+        userInfo.AESkey = AESkey;
+    }
+
+    public static String AESkey;
+
     public static String getClient_id() {
         return client_id;
     }
@@ -66,5 +76,13 @@ public final class userInfo {
         userInfo.examtime = examtime;
     }
 
-    public static boolean isLogin = false;
+    private static boolean isLogin = false;
+
+    public static boolean isLogin() {
+        return isLogin;
+    }
+
+    public static void setIsLogin(boolean isLogin) {
+        userInfo.isLogin = isLogin;
+    }
 }

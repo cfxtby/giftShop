@@ -3,6 +3,7 @@ package com.example.tby.myapplication;
 import android.app.Application;
 import android.graphics.Bitmap;
 import android.telephony.TelephonyManager;
+import android.util.Log;
 
 import com.example.R;
 import com.example.tby.myapplication.utils.tokenDB;
@@ -34,6 +35,7 @@ public class application extends Application {
             initImageLoader();
             initUser();
             String SerialNumber = android.os.Build.SERIAL;
+            Log.i("序列号",SerialNumber);
             userInfo.setClient_id(SerialNumber);
             super.onCreate();
 
@@ -91,6 +93,7 @@ public class application extends Application {
                         Long.parseLong(userInfo.getExamtime())<System.currentTimeMillis()) {
                     //刷新accesstoken
                 }
+                //userInfo.setIsLogin(true);
             }
         }.start();
 

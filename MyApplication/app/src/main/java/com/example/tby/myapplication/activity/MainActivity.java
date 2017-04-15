@@ -47,9 +47,7 @@ public class MainActivity extends Activity implements OnClickListener {
       //  x.Ext.setDebug(BuildConfig.DEBUG); // 是否输出debug日志, 开启debug会影响性能.
         //NetworkManager.getInstance().init(getApplicationContext());
         ///应该是从网上开始下载当前的图片
-
         initView();
-
         if (savedInstanceState == null) {
             // 记录当前Fragment，首次进入初始化界面，进入homeFragment
             mCurrentTag = FragmentTag.TAG_HOME;

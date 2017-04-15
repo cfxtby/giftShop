@@ -2,6 +2,7 @@ package tby.com.Oauth;
 //包含着access_token的所有应用对象
 
 import java.util.Date;
+import java.util.Random;
 import java.util.UUID;
 
 import org.json.JSONException;
@@ -19,7 +20,17 @@ public class access_token {
 	private String username;
 	private String client_id;
 	private long createdtime;
+	public String getAESkey() {
+		return AESkey;
+	}
+	public void setAESkey(String aESkey) {
+		AESkey = aESkey;
+	}
+
+
+
 	private long modifiedtime;
+	private String AESkey;
 			
 	public long getCreatedtime() {
 		return createdtime;
@@ -69,6 +80,8 @@ public class access_token {
 	public void setClient_id(String client_id) {
 		this.client_id = client_id;
 	}
+
+	
 	
 	public void getNewAccessToken() {
 		expires=15*24*3600*1000+"";
@@ -81,6 +94,11 @@ public class access_token {
 	
 	public void getNewRefreshToken() {
 		String random = UUID.randomUUID().toString();//获得随机数作为access_token
+		Random ran=new Random();
+		int a=ran.nextInt(99999999);
+		int b=ran.nextInt(99999999);
+		long l=a*100000000L+b; 
+		AESkey=String.valueOf(l);
 		refresh_token=hashMd5.getMD5(random+token_type+username+client_id);
 		}
 
@@ -94,6 +112,7 @@ public class access_token {
 			js.put("access_token",access_token);
 			js.put("refresh_token", refresh_token);
 			js.put("modifiedtime",modifiedtime);
+			js.put("AESkey", AESkey);
 		} catch (JSONException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -101,5 +120,4 @@ public class access_token {
 		}
 		return js.toString();
 	}
-	
 }

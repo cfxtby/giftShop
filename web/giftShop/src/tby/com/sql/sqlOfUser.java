@@ -43,6 +43,7 @@ public class sqlOfUser {
 				String s1[]={userid,password,null};
 				sqlCreat.doSql(sql, s1);
 				at.getNewAccessToken();
+				sqlOfToken.insertAccessToken(at);
 				return at;
 			}
 		} catch (SQLException e) {

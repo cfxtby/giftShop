@@ -179,10 +179,41 @@ public final class sqlOfGift {
 		return null;
 	}
 
+	public static int queryLeft(String query){
+		int result=-1;
+		String sql="select numLeft from goodinfo where accountGood= ?";
+		String []order={query};
+		ResultSet rs=sqlCreat.doSqlgetRs(sql, order);
+		
+		try {
+			if(rs.next()){
+				return rs.getInt("numLeft");
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return result;
+	}
+
+	public static void update(orderForm of){
+		String sql="update goodinfo set numLeft=numLeft-? where accountGood= ?";
+		String []order={of.getNum(),of.getGoodid()};
+		sqlCreat.doSql(sql, order);
+		
+	}
+	
 	public static boolean insertOrder(orderForm of) throws SQLException{
 
 		String sql="insert into orderform(userid,goodid,num,price) values(?,?,?,?)";
-		String s[]=new String[5];
+		int left=queryLeft(of.getGoodid());
+		if(left<Integer.parseInt(of.getNum())){
+			return false;
+		}
+		else{
+			update(of);
+		}
+		String s[]=new String[4];
 		s[0]=of.getUserid();
 		s[1]=of.getGoodid();
 		s[2]=of.getNum();

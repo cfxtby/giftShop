@@ -22,6 +22,17 @@ public class user {
     private String token_type;
     @Column(name = "client_id")
     public String client_id;
+    @Column(name = "AESkey")
+    public String AESkey;
+
+    public String getAESkey() {
+        return AESkey;
+    }
+
+    public void setAESkey(String AESkey) {
+        this.AESkey = AESkey;
+    }
+
     public String getAccess_token() {
         return access_token;
     }

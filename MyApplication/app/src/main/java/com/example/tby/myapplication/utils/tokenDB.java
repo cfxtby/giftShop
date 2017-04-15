@@ -30,7 +30,7 @@ public class tokenDB {
             person.setRefresh_token(userInfo.getRefresh_token());
             person.setExamtime(userInfo.getExamtime());
             person.setToken_type(userInfo.getToken_type());
-            db.save(person);
+            db.saveOrUpdate(person);
             Log.d("xyz","save succeed!");
         } catch (DbException e) {
             Log.d("xyz",e.toString());

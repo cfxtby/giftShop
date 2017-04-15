@@ -26,7 +26,7 @@ public class infoOfGood extends HttpServlet {
 			result="ERROR";
 		System.out.println(result);
 		System.out.println(i);
-		resp.getOutputStream().write(result.getBytes());
+		resp.getOutputStream().write(result.getBytes("UTF-8"));
 		resp.getOutputStream().flush();
 		resp.getOutputStream().close();
 	}

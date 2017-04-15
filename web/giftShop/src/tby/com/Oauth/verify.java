@@ -18,9 +18,10 @@ public class verify {
 	public static access_token verifyAccessToken(String RefreshToken,String userid){
 		boolean flag;
 		access_token at=sqlOfToken.getAccessToken(userid);
-		if (at==null)return null;
+		if (at==null)
+			return null;
 		if(RefreshToken.compareTo(at.getAccess_token())==0&&at.getModifiedtime()>=System.currentTimeMillis()){
-			at.setAccess_token(null);
+			//at.setAccess_token(null);
 			return at;
 		}
 		else{
@@ -28,6 +29,4 @@ public class verify {
 		}
 		//return flag;
 	}
-	
-
 }
